@@ -1,0 +1,118 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrator de Texto de Imagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+            display: flex;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        label {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            display: block;
+            width: 150px;
+            margin: 0 auto;
+            font-weight: bold;
+        }
+
+        #resultado {
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        pre {
+            font-size: 16px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Extrator de Texto de Imagem</h1>
+    </header>
+    <div class="container">
+        <form id="upload-form" enctype="multipart/form-data">
+            <label for="image-input">Selecionar Imagem</label>
+            <button type="button" onclick="enviarImagem()">Enviar Imagem</button>
+            <input type="file" id="image-input" accept=".jpg, .jpeg, .png" />
+        </form>
+        <div id="resultado">
+            <h2>Texto Extraído:</h2>
+            <pre id="texto-extrato"></pre>
+        </div>
+    </div>
+    <script>
+        function enviarImagem() {
+            const input = document.getElementById('image-input');
+            const file = input.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch('http://localhost:5000/extract_text', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const textoExtrato = document.getElementById('texto-extrato');
+                    textoExtrato.innerHTML = data.text.replace(/\n/g, '<br>');
+                    textoExtrato.textContent = data.text;
+                })
+                .catch(error => {
+                    console.error('Erro ao chamar a API', error);
+                });
+            } else {
+                console.error('Selecione uma imagem para fazer o upload.');
+            }
+        }
+    </script>
+</body>
+</html>
+
